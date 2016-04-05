@@ -12,11 +12,29 @@
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 	<title>FacePoop</title>
 	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="icon" href="img/favicon.png">
 	<script src="bower_components/jquery/dist/jquery.min.js"></script>
 	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="bower_components/angular/angular.min.js"></script>
+	<script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+	<!-- AngularFire -->
+	<script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+	<script src="app.js"></script>
 	<style type="text/css">
 		body{
 			padding-top: 70px;
+			background-color: #e9eaed;
+		}
+
+		.sidebar{
+			list-style-type: none;
+			padding: 0px;
+			font-size: 12px;
+		}
+
+		.sidebar-holder{
+			padding-left:0px;
+			width:14.666667%;
 		}
 
 		.navbar-inverse{
@@ -30,10 +48,121 @@
 			text-decoration: none;
 			color: #FFF;
 		}
+
+		.status-box{
+			
+		}
+
+		.publish{
+			background-color:#3a5795;
+			height:25px;
+			line-height:10px;
+			font-size:12px;
+			font-weight:bold;
+			padding-left:15px;
+			padding-right:15px;
+		}
+
+		.reach{
+			height:25px;
+			line-height:10px;
+			font-size:12px;
+			font-weight:bold;
+			padding-left:15px;
+			padding-right:15px;	
+		}
+
+		.glyphicon-user{  
+			line-height: 8px !important;
+		}	
+
+		textarea, input{
+			outline: none;
+		}
+
+		a{
+			color: #3b5998;
+	    	cursor: pointer;
+	    	text-decoration: none;
+	    }	
+
+	    .post-owner{
+	    	font-size: 14px;
+	    	font-weight: bold;
+	    }
+
+	    .time{
+	    	color:#999;
+	    	font-size: 12px;
+	    }
+
+	    .row-top{
+	    	margin-top:10px;
+	    }
+
+	    .glyphicon-globe{
+	    	margin-left:5px; 
+	    }
+
+	    .social a{
+	    	color:#808080;
+	    	font-size: 13px;
+	    	font-weight: bold;
+	    }
+
+	    .pencil{
+			height:16px !important;
+			width:16px !important;
+			font-size:10px !important;
+			padding: 0px;
+			line-height:16px;
+	    }
+
+	    .picture{
+			height:16px !important;
+			width:16px !important;
+			font-size:10px !important;
+			padding: 0px;
+			line-height:16px;
+	    }
+
+	    .album{
+	    	height:16px !important;
+			width:16px !important;
+			font-size:10px !important;
+			padding: 0px;
+			line-height:16px;	
+	    }
+
+	    .fotos-link{
+	    	font-size: 14px;
+	    	font-weight: bold;
+	    	margin-left: 5px;
+	    	line-height: 16px;
+	    }
+
+	    .status-link{
+	    	font-size: 14px;
+		    font-weight: bold;
+		    margin-left: 5px;
+		    line-height: 16px;
+	    }
+
+	    .album-link{
+	    	font-size: 14px;
+		    font-weight: bold;
+		    margin-left: 5px;
+		    line-height: 16px;
+	    }
+
+	    .panel{
+	    	margin-bottom: 10px !important;
+	    }
+
 	</style>
 </head>
-<body>
-
+<body ng-app="facepoopApp">
+<div ng-controller="Timeline">
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
@@ -43,14 +172,108 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">FacePoop</a>
+	  <a class="navbar-brand" href="#" style="padding-left:0px">
+      	<img src="img/poop.png" style="style:border:0px;margin-right:10px;float:left;margin-top:-15px" />
+      
+      	<span style="float:left;font-weight:bold"> FacePoop</span>
+      </a>
     </div>    
   </div>
 </nav>
 <div class="container">
-	teste
+	<div class="row">
+		<div class="col-md-2 sidebar-holder">
+			<ul class="sidebar">
+				<li><img src="img/{{user.id}}.jpg" height="24" width="24" style="margin-right:5px" />&nbsp;{{user.name}}</li>
+			</ul>
+		</div>
+		<div class="col-md-7">
+			<div class="status-box">
+				<div class="panel panel-default">
+				  <div class="panel-heading" style="background-color:white">
+				    <div class="row">
+				    	<div class="col-md-2">
+						    <a class="btn btn-primary pencil"><span class="glyphicon glyphicon-pencil"></span></a><a href="javascript:void(0)"><span class="status-link" style="color:#000">Status</span></a>
+						</div>
+						<div class="col-md-4" style="border-left:1px solid #CCC">
+						    <a class="btn btn-warning picture"><span class="glyphicon glyphicon-picture"></span></a><a href="javascript:void(0)"><span class="fotos-link">Adicionar fotos/vídeos</span></a>
+						</div>
+					
+					
+				    	<div class="col-md-4" style="border-left:1px solid #CCC">
+						    <a class="btn btn-primary album"><span class="glyphicon glyphicon-book"></span></a><a href="javascript:void(0)"><span class="album-link">Criar álbum de fotos</span></a>
+						</div>
+					</div>							    
+				  </div>
+				  <div class="panel-body">
+				  	<form id="form-status">
+					    <div class="row">
+							<div class="col-md-1">
+								<img src="img/{{user.id}}.jpg" height="40" width="40" style="margin-right:5px" />
+							</div>
+							<div class="col-md-11">
+								<textarea id="status" ng-model="statusField" placeholder="O que você deseja compartilhar ?" style="height:100%;width:100%;border:0px;resize:none"></textarea>
+							</div>
+					    </div>
+					</form>
+				  </div>
+				   <div class="panel-footer clearfix" style="background-color:white">
+				   					   		
+					   	<a class="btn btn-primary pull-right publish" href="javascript:void(0)" style="" ng-click="postStatus()">Publicar</a>
+					   	<a class="btn btn-default pull-right reach" href="javascript:void(0)" style="margin-right:10px"><span class="glyphicon glyphicon-user"></span>&nbsp;Amigos&nbsp;<span class="caret"></span></a>
+					   	
+				   </div>
+				</div>
+			</div>
+		</div>	
+		<div class="col-md-3">
+			<div class="panel panel-default">
+			  <div class="panel-body">
+			    Basic panel example
+			  </div>
+			   <div class="panel-footer">Panel footer</div>
+			</div>
+		</div>
+	</div>
+	<div class="row" ng-repeat="post in posts">
+		<div class="col-md-2 sidebar-holder">
+		</div>
+		<div class="col-md-7">
+			<div class="panel panel-default">				  
+				  <div class="panel-body">
+				    <div class="row">
+						<div class="col-md-1">
+							<img src="img/{{post.user_id}}.jpg" height="40" width="40" style="margin-right:5px" />
+						</div>
+						<div class="col-md-11" style="padding-left:10px">
+							<div style="position:relative;width:100%;height:40px;float:left;">
+								<div style="position:relative;width:100%;float:left;">
+									<a href="javascript:void(0)" class="post-owner" style="float:left">{{userList[post.user_id].name}}</a>
+								</div>
+								<div style="position:relative;width:100%;float:left;">
+									<div class="time">10 min.<span class="glyphicon glyphicon-globe"></span></div>
+								</div>	
+							</div>
+						</div>
+				    </div>
+				    <div class="row row-top">	
+						<div class="col-md-12">														
+							{{post.text}}							
+						</div>
+				    </div>
+				  </div>
+				   <div class="panel-footer clearfix social" style="background-color:white">
+				   	<a href="javascript:void(0)" style="float:left;margin-right:30px"><span class="glyphicon glyphicon-thumbs-up" style="margin-right:5px"></span>Curtir</a>
+				   	<a href="javascript:void(0)" style="float:left;margin-right:30px"><span class="glyphicon glyphicon-comment" style="margin-right:5px"></span>Comentar</a>
+				   	<a href="javascript:void(0)" style="float:left;margin-right:30px"><span class="glyphicon glyphicon-share-alt" style="margin-right:5px"></span>Compartilhar</a>
+				   </div>
+				</div>
+		</div>
+		<div class="col-md-3">
+		</div>
+	</div>	
 </div>
     
-	
+</div>	
 </body>
 </html>
