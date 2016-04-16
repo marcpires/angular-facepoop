@@ -4,27 +4,24 @@
 			.service('ref',['dbUrl', Firebase])
 			.controller('Timeline', function($scope, $firebaseArray,ref){
 				
-				$scope.userList = [{id:0, name:'Bill Gates'}, 
-									{id:1, name:'Mark Zukerberg'}, 
-									{id:2, name:'Barack Obama'}, 
-									{id:3, name:'Albert Einstein'}];
+				$scope.userList = [{id:0, name:'Bill Gates'}, {id:1, name:'Mark Zukerberg'}, {id:2, name:'Barack Obama'}, {id:3, name:'Albert Einstein'}];
 				
 				$scope.user = $scope.userList[Math.floor((Math.random() * 4) + 0)];
 
-				$scope.posts = $firebaseArray(ref);
+				$scope.posts = $firebaseArray(ref);		
 
-				console.log($scope.posts);
+				var data = new Date();
 
 				$scope.postStatus = function(){
 					 $scope.posts.$add({
 				      text: $scope.statusField,
 				      user_id: $scope.user.id,	
-				      date: Date.now()			      
+				      date: (data.getDate()).toString()+"/"+(data.getMonth()+1).toString()+"/"+(data.getFullYear()).toString()
 				    });
-				}
+
+					$scope.statusField = "";
+				};		
 
 			});
-
-
 
 })();
